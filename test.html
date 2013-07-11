@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+<title>External Script Loader example</title>
+<meta charset="UTF-8">
+
+<script>
+//Async load of our ExternalScriptLoader.js
+(function() {
+	var scriptTag = document.createElement('script');
+	scriptTag.async = true;
+	scriptTag.type = 'text/javascript';
+	scriptTag.id = 'esl';
+	scriptTag.src = 'ExternalScriptLoader.js';
+	var node = document.getElementsByTagName('script')[0];
+	node.parentNode.insertBefore(scriptTag, node);
+})();
+</script>
+
+</head>
+<body style="font-family: Arial;">
+<h1>This is an example of loading an external javascript with ExternalJSLoader.</h1>
+
+<p>
+The following shows the status of the script being loaded.
+</p>
+<div id="eslStatus" style="margin-top: 20px; height: 270px;">Starting.</div>
+
+<script>
+
+	function sleep(milliseconds) {
+  		var start = new Date().getTime();
+  		for (var i = 0; i < 1e7; i++) {
+    			if ((new Date().getTime() - start) > milliseconds){
+      				break;
+   			}
+  		}
+	}
+	function myCallback() {
+		document.getElementById('eslStatus').innerHTML = 'DONE!!!';
+	}
+	function EslLoaded() {
+		ESL = window.ESL || [];
+		ESL.load('jquery', 'http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js', true);
+		document.getElementById('eslStatus').innerHTML = 'Loading....';
+		ESL.createCallback('jquery', myCallback);		
+	}
+	//adding a delay to show changes
+	sleep(1000);
+	var eslNode = document.getElementById('esl');
+	eslNode.onload = EslLoaded;
+</script>
+</body>
+
+</html>
+
