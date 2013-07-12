@@ -27,26 +27,16 @@ The following shows the status of the script being loaded.
 <div id="eslStatus" style="margin-top: 20px; height: 270px;">Starting.</div>
 
 <script>
-
-	function sleep(milliseconds) {
-  		var start = new Date().getTime();
-  		for (var i = 0; i < 1e7; i++) {
-    			if ((new Date().getTime() - start) > milliseconds){
-      				break;
-   			}
-  		}
-	}
 	function myCallback() {
 		document.getElementById('eslStatus').innerHTML = 'DONE!!!';
 	}
 	function EslLoaded() {
 		ESL = window.ESL || [];
-		ESL.load('jquery', 'http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js', true);
+		ESL.load('ts', 'testScript.js', true);
 		document.getElementById('eslStatus').innerHTML = 'Loading....';
-		ESL.createCallback('jquery', myCallback);		
+		ESL.createCallback('ts', myCallback);		
 	}
 	//adding a delay to show changes
-	sleep(1000);
 	var eslNode = document.getElementById('esl');
 	eslNode.onload = EslLoaded;
 </script>
