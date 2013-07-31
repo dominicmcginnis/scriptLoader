@@ -4,14 +4,14 @@
 <title>External Script Loader example</title>
 <meta charset="UTF-8">
 
-<script>
+<script type="text/javascript">
 //Async load of our ExternalScriptLoader.js
 (function() {
 	var scriptTag = document.createElement('script');
 	scriptTag.async = true;
 	scriptTag.type = 'text/javascript';
 	scriptTag.id = 'esl';
-	scriptTag.src = 'ExternalScriptLoader.js';
+	scriptTag.src = 'externalScriptLoader.js';
 	var node = document.getElementsByTagName('script')[0];
 	node.parentNode.insertBefore(scriptTag, node);
 })();
@@ -24,21 +24,40 @@
 <p>
 The following shows the status of the script being loaded.
 </p>
-<div id="eslStatus" style="margin-top: 20px; height: 270px;">Starting.</div>
+<div id="eslStatus" style="margin-top: 20px; height: 40px;">Starting.</div>
+<div id="jqStatus" style="margin-top: 20px; height: 40px;">JQuery Frame.</div>
 
-<script>
-	function myCallback() {
-		document.getElementById('eslStatus').innerHTML = 'DONE!!!';
+<script type="text/javascript">
+	window.jQActions = {};
+	jQActions.actions = [];
+
+	jQActions.actions.push(function() { $('#jqStatus').append('<p>Foobar 1</p>');});
+	jQActions.actions.push(function() { $('#jqStatus').append('<p>Foobar 2</p>');});
+	jQActions.actions.push(function() { $('#jqStatus').append('<p>Foobar 3</p>');});
+
+	//ESL is loaded, now start addign in other scripts to load
+	function eslLoaded() {
+
+		ESL.load('ts', 'file://localhost/Users/rmcginnis/github/personal/scriptLoader/testScript.js');
+		document.getElementById('eslStatus').innerHTML = 'External Script Loading....';
+		ESL.createCallback('ts', function(){ document.getElementById('eslStatus').innerHTML = 'Load Completed for test script!!!';});		
+
+		ESL.load('jq', 'http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
+		ESL.createCallback('jq', function(){ 
+				var i = 0;
+				while(i < jQActions.actions.length) {					
+						(jQActions.actions[i]).call(this);
+						i++;
+				}	
+			});		
+
+		ESL.load('jq', 'http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js');
+
 	}
-	function EslLoaded() {
-		ESL = window.ESL || [];
-		ESL.load('ts', 'testScript.js', true);
-		document.getElementById('eslStatus').innerHTML = 'Loading....';
-		ESL.createCallback('ts', myCallback);		
-	}
+
 	//adding a delay to show changes
 	var eslNode = document.getElementById('esl');
-	eslNode.onload = EslLoaded;
+	eslNode.onload = eslLoaded;
 </script>
 </body>
 
